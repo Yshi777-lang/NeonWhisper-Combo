@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NeonWhisper Combo"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
+    <Button android:id="@+id/btnBrowser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🌐 Browser"
+        android:layout_marginBottom="12dp" />
+
+    <Button android:id="@+id/btnLinux"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Linux (Termux)"
+        android:layout_marginBottom="12dp" />
+
+    <Button android:id="@+id/btnVPN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" VPN (v2rayNG)" />
+</LinearLayout>
