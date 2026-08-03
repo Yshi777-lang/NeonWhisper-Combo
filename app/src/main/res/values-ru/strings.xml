@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NeonWhisper Combo</string>
+    <string name="nav_chat">Чат</string>
+    <string name="nav_browser">Браузер</string>
+    <string name="nav_linux">Linux</string>
+    <string name="nav_clipboard">Буфер</string>
+    <string name="nav_soul">Душа</string>
+</resources>

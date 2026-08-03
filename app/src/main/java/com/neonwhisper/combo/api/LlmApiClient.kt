@@ -21,7 +21,7 @@ class LlmApiClient {
     private var geminiKey: String = ""
     private var anthropicKey: String = ""
 
-    fun setApiKeys(qwen: String, openai: String, gemini: String, anthropic: String) {
+    fun setApiKey(qwen: String, openai: String, gemini: String, anthropic: String) {
         qwenKey = qwen
         openaiKey = openai
         geminiKey = gemini
@@ -29,18 +29,32 @@ class LlmApiClient {
     }
 
     suspend fun sendMessage(provider: String, message: String, soulPrompt: String): String {
+        return sendMessageWithModel(provider, getDefaultModel(provider), message, soulPrompt)
+    }
+
+    suspend fun sendMessageWithModel(provider: String, model: String, message: String, soulPrompt: String): String {
         return withContext(Dispatchers.IO) {
             when (provider) {
-                "Qwen (Alibaba)" -> callQwen(message, soulPrompt)
-                "OpenAI" -> callOpenAI(message, soulPrompt)
-                "Gemini" -> callGemini(message, soulPrompt)
-                "Anthropic" -> callAnthropic(message, soulPrompt)
+                "Qwen (Alibaba)" -> callQwen(model, message, soulPrompt)
+                "OpenAI" -> callOpenAI(model, message, soulPrompt)
+                "Gemini" -> callGemini(model, message, soulPrompt)
+                "Anthropic" -> callAnthropic(model, message, soulPrompt)
                 else -> throw Exception("Unknown provider: $provider")
             }
         }
     }
 
-    private fun callQwen(message: String, soulPrompt: String): String {
+    private fun getDefaultModel(provider: String): String {
+        return when(provider) {
+            "Qwen (Alibaba)" -> "qwen-turbo"
+            "OpenAI" -> "gpt-3.5-turbo"
+            "Gemini" -> "gemini-1.5-flash"
+            "Anthropic" -> "claude-3-haiku-20240307"
+            else -> "qwen-turbo"
+        }
+    }
+
+    private fun callQwen(model: String, message: String, soulPrompt: String): String {
         if (qwenKey.isEmpty()) throw Exception("Qwen API key not set")
         val url = "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
 
@@ -55,7 +69,7 @@ class LlmApiClient {
         })
 
         val json = JSONObject()
-        json.put("model", "qwen-turbo")
+        json.put("model", model)
         json.put("input", JSONObject().apply {
             put("messages", messagesArray)
         })
@@ -77,7 +91,7 @@ class LlmApiClient {
         }
     }
 
-    private fun callOpenAI(message: String, soulPrompt: String): String {
+    private fun callOpenAI(model: String, message: String, soulPrompt: String): String {
         if (openaiKey.isEmpty()) throw Exception("OpenAI API key not set")
         val url = "https://api.openai.com/v1/chat/completions"
 
@@ -92,7 +106,7 @@ class LlmApiClient {
         })
 
         val json = JSONObject()
-        json.put("model", "gpt-3.5-turbo")
+        json.put("model", model)
         json.put("messages", messagesArray)
 
         val request = Request.Builder()
@@ -111,9 +125,9 @@ class LlmApiClient {
         }
     }
 
-    private fun callGemini(message: String, soulPrompt: String): String {
+    private fun callGemini(model: String, message: String, soulPrompt: String): String {
         if (geminiKey.isEmpty()) throw Exception("Gemini API key not set")
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$geminiKey"
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$geminiKey"
 
         val json = JSONObject()
         json.put("contents", JSONArray().apply {
@@ -141,12 +155,12 @@ class LlmApiClient {
         }
     }
 
-    private fun callAnthropic(message: String, soulPrompt: String): String {
+    private fun callAnthropic(model: String, message: String, soulPrompt: String): String {
         if (anthropicKey.isEmpty()) throw Exception("Anthropic API key not set")
         val url = "https://api.anthropic.com/v1/messages"
 
         val json = JSONObject()
-        json.put("model", "claude-3-haiku-20240307")
+        json.put("model", model)
         json.put("max_tokens", 1024)
         json.put("system", soulPrompt.ifEmpty { "You are a helpful assistant" })
         json.put("messages", JSONArray().apply {

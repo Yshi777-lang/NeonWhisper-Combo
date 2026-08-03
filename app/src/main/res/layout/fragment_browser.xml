@@ -15,6 +15,13 @@
             android:layout_width="40dp" android:layout_height="40dp"
             android:src="@android:drawable/ic_media_previous" />
 
+        <Button android:id="@+id/btnMode"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:text="Search"
+            android:textSize="10sp"
+            android:padding="4dp" />
+
         <Spinner android:id="@+id/spinnerSearch"
             android:layout_width="100dp"
             android:layout_height="40dp"

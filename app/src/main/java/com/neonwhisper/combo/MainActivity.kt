@@ -2,57 +2,65 @@ package com.neonwhisper.combo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.neonwhisper.combo.fragments.*
+import com.neonwhisper.combo.adapters.FragmentPagerAdapter
 
 class MainActivity : AppCompatActivity() {
-    private val chatFragment = ChatFragment()
-    private val browserFragment = BrowserFragment()
-    private val linuxFragment = LinuxFragment()
-    private val clipboardFragment = ClipboardFragment()
-    private val soulFragment = SoulFragment()
+    private lateinit var viewPager: ViewPager2
+    private lateinit var bottomNav: BottomNavigationView
+    private lateinit var adapter: FragmentPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        viewPager = findViewById(R.id.viewPager)
+        bottomNav = findViewById(R.id.bottomNav)
+        adapter = FragmentPagerAdapter(this)
+        
+        viewPager.adapter = adapter
         
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_chat -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, chatFragment)
-                        .commit()
+                    viewPager.currentItem = 0
                     true
                 }
                 R.id.nav_browser -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, browserFragment)
-                        .commit()
+                    viewPager.currentItem = 1
                     true
                 }
                 R.id.nav_linux -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, linuxFragment)
-                        .commit()
+                    viewPager.currentItem = 2
                     true
                 }
                 R.id.nav_clipboard -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, clipboardFragment)
-                        .commit()
+                    viewPager.currentItem = 3
                     true
                 }
                 R.id.nav_soul -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, soulFragment)
-                        .commit()
+                    viewPager.currentItem = 4
                     true
                 }
                 else -> false
             }
         }
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val itemId = when(position) {
+                    0 -> R.id.nav_chat
+                    1 -> R.id.nav_browser
+                    2 -> R.id.nav_linux
+                    3 -> R.id.nav_clipboard
+                    4 -> R.id.nav_soul
+                    else -> R.id.nav_chat
+                }
+                bottomNav.menu.findItem(itemId)?.isChecked = true
+            }
+        })
 
         if (savedInstanceState == null) {
             bottomNav.selectedItemId = R.id.nav_chat

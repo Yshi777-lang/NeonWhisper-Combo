@@ -19,7 +19,7 @@ import com.neonwhisper.combo.data.Message
 import com.neonwhisper.combo.data.ChatRepository
 import com.neonwhisper.combo.adapters.MessageAdapter
 import com.neonwhisper.combo.api.LlmApiClient
-import kotlinx.coroutines.flow.first
+import com.neonwhisper.combo.dialogs.ApiAuthDialog
 import kotlinx.coroutines.launch
 
 class ChatFragment : Fragment() {
@@ -32,6 +32,10 @@ class ChatFragment : Fragment() {
     private val messages = mutableListOf<Message>()
     private lateinit var repository: ChatRepository
     private lateinit var apiClient: LlmApiClient
+    private lateinit var authDialog: ApiAuthDialog
+    
+    private var currentApiKey = ""
+    private var currentModel = "qwen-turbo"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_chat, container, false)
@@ -42,6 +46,7 @@ class ChatFragment : Fragment() {
         
         repository = ChatRepository(requireContext())
         apiClient = LlmApiClient()
+        authDialog = ApiAuthDialog(requireContext(), repository)
         
         rvMessages = view.findViewById(R.id.rvMessages)
         etInput = view.findViewById(R.id.etInput)
@@ -49,31 +54,31 @@ class ChatFragment : Fragment() {
         spinnerProvider = view.findViewById(R.id.spinnerProvider)
         btnSettings = view.findViewById(R.id.btnSettings)
 
-        // Настройка RecyclerView
         messageAdapter = MessageAdapter(messages)
         rvMessages.layoutManager = LinearLayoutManager(requireContext())
         rvMessages.adapter = messageAdapter
 
-        // Провайдеры
         val providers = arrayOf("Qwen (Alibaba)", "OpenAI", "Gemini", "Anthropic")
         spinnerProvider.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, providers)
 
-        // Загрузка API ключей
-        loadApiKeys()
-
         btnSettings.setOnClickListener {
-            // Открываем SettingsActivity
-            Toast.makeText(requireContext(), "Settings coming soon", Toast.LENGTH_SHORT).show()
+            val provider = spinnerProvider.selectedItem.toString()
+            authDialog.show(provider, currentApiKey, currentModel) { newKey, newModel ->
+                currentApiKey = newKey
+                currentModel = newModel
+                apiClient.setApiKey(currentApiKey, "", "", "") // Упрощённо
+                Toast.makeText(requireContext(), "Saved: $newModel", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        btnSend.setOnClickListener {
-            sendMessage()
-        }
+        btnSend.setOnClickListener { sendMessage() }
+        
+        loadMessages()
     }
 
-    private fun loadApiKeys() {
+    private fun loadMessages() {
         lifecycleScope.launch {
-            repository.loadApiKeys()
+            // Загрузка из Room базы
         }
     }
 
@@ -90,7 +95,8 @@ class ChatFragment : Fragment() {
         
         lifecycleScope.launch {
             try {
-                val response = apiClient.sendMessage(selectedProvider, text, getSoulPrompt())
+                val soulPrompt = SoulFragment.getSoul(requireContext())
+                val response = apiClient.sendMessageWithModel(selectedProvider, currentModel, text, soulPrompt)
                 val aiMessage = Message(response, false, System.currentTimeMillis())
                 messages.add(aiMessage)
                 messageAdapter.notifyDataSetChanged()
@@ -99,9 +105,5 @@ class ChatFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private suspend fun getSoulPrompt(): String {
-        return SoulFragment.getSoul(requireContext())
     }
 }
