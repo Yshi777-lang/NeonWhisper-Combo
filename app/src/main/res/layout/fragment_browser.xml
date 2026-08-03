@@ -8,18 +8,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:padding="4dp"
         android:background="#311B92">
 
         <ImageButton android:id="@+id/btnBack"
             android:layout_width="40dp" android:layout_height="40dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:src="@android:drawable/ic_media_previous" />
+
+        <Spinner android:id="@+id/spinnerSearch"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="#7C4DFF" />
 
         <EditText android:id="@+id/urlInput"
             android:layout_width="0dp" android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="URL"
+            android:hint="Search or URL"
             android:imeOptions="actionGo"
             android:inputType="textUri"
             android:maxLines="1"
@@ -28,13 +32,11 @@
 
         <ImageButton android:id="@+id/btnRefresh"
             android:layout_width="40dp" android:layout_height="40dp"
-            android:src="@android:drawable/ic_popup_sync"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:src="@android:drawable/ic_popup_sync" />
 
         <ImageButton android:id="@+id/btnHome"
             android:layout_width="40dp" android:layout_height="40dp"
-            android:src="@android:drawable/ic_menu_compass"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:src="@android:drawable/ic_menu_compass" />
     </LinearLayout>
 
     <WebView android:id="@+id/webView"

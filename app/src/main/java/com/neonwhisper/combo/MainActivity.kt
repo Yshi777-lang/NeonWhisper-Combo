@@ -6,7 +6,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.neonwhisper.combo.fragments.*
 
 class MainActivity : AppCompatActivity() {
-
+    private val chatFragment = ChatFragment()
     private val browserFragment = BrowserFragment()
     private val linuxFragment = LinuxFragment()
     private val clipboardFragment = ClipboardFragment()
@@ -20,6 +20,12 @@ class MainActivity : AppCompatActivity() {
         
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_chat -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, chatFragment)
+                        .commit()
+                    true
+                }
                 R.id.nav_browser -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainer, browserFragment)
@@ -48,9 +54,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Открываем Browser по умолчанию
         if (savedInstanceState == null) {
-            bottomNav.selectedItemId = R.id.nav_browser
+            bottomNav.selectedItemId = R.id.nav_chat
         }
     }
 }
