@@ -45,7 +45,6 @@ class BrowserFragment : Fragment() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
 
-        // Search engines spinner
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, searchEngines.keys.toTypedArray())
         spinnerSearch.adapter = adapter
 
@@ -78,14 +77,5 @@ class BrowserFragment : Fragment() {
     private fun loadUrl(url: String) {
         webView.loadUrl(url)
         urlInput.setText(url)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return if (webView.canGoBack()) {
-            webView.goBack()
-            true
-        } else {
-            false
-        }
     }
 }
