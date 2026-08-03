@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:label="NeonWhisper Combo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        android:theme="@style/Theme.App">
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -20,6 +20,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BrowserActivity" />
     </application>
 </manifest>

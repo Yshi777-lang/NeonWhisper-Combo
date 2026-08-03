@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NeonWhisper Combo</string>
+    <string name="nav_browser">Browser</string>
+    <string name="nav_linux">Linux</string>
+    <string name="nav_clipboard">Clipboard</string>
+    <string name="nav_soul">Soul</string>
 </resources>

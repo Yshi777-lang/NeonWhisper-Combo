@@ -1,46 +1,56 @@
 package com.neonwhisper.combo
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.neonwhisper.combo.fragments.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val browserFragment = BrowserFragment()
+    private val linuxFragment = LinuxFragment()
+    private val clipboardFragment = ClipboardFragment()
+    private val soulFragment = SoulFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.btnBrowser).setOnClickListener {
-            startActivity(Intent(this, BrowserActivity::class.java))
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_browser -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, browserFragment)
+                        .commit()
+                    true
+                }
+                R.id.nav_linux -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, linuxFragment)
+                        .commit()
+                    true
+                }
+                R.id.nav_clipboard -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, clipboardFragment)
+                        .commit()
+                    true
+                }
+                R.id.nav_soul -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, soulFragment)
+                        .commit()
+                    true
+                }
+                else -> false
+            }
         }
 
-        findViewById<Button>(R.id.btnLinux).setOnClickListener {
-            openTermux()
-        }
-
-        findViewById<Button>(R.id.btnVPN).setOnClickListener {
-            openVPN()
-        }
-    }
-
-    private fun openTermux() {
-        try {
-            val intent = packageManager.getLaunchIntentForPackage("com.termux")
-            if (intent != null) startActivity(intent)
-            else Toast.makeText(this, "Termux не установлен", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "Ошибка", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun openVPN() {
-        try {
-            val intent = packageManager.getLaunchIntentForPackage("com.v2ray.ang")
-            if (intent != null) startActivity(intent)
-            else Toast.makeText(this, "v2rayNG не установлен", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "Ошибка", Toast.LENGTH_SHORT).show()
+        // Открываем Browser по умолчанию
+        if (savedInstanceState == null) {
+            bottomNav.selectedItemId = R.id.nav_browser
         }
     }
 }

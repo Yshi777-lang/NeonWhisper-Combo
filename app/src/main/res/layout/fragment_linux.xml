@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#121212">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🐧 Linux Environment"
+        android:textSize="28sp"
+        android:textColor="#B388FF"
+        android:layout_marginBottom="24dp" />
+
+    <Button android:id="@+id/btnOpenTermux"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open Termux"
+        android:layout_marginBottom="16dp" />
+
+    <Button android:id="@+id/btnSendCommand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Command to Termux" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tip: Use Android Back button to return here without closing Termux session"
+        android:textColor="#B388FF"
+        android:textSize="12sp"
+        android:layout_marginTop="24dp"
+        android:gravity="center" />
+</LinearLayout>

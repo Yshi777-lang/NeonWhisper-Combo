@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_browser"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="@string/nav_browser" />
+    <item
+        android:id="@+id/nav_linux"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/nav_linux" />
+    <item
+        android:id="@+id/nav_clipboard"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/nav_clipboard" />
+    <item
+        android:id="@+id/nav_soul"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="@string/nav_soul" />
+</menu>
