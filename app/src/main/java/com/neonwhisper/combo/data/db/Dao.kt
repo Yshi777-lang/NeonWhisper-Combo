@@ -19,7 +19,7 @@ interface ChatDao {
     @Insert
     suspend fun insertMessage(message: LocalMessageEntity)
 
-    // УМНЫЙ КЭШ: Оставляем только последние N сообщений, остальные удаляем (Вариант А+Г)
+    // УМНЫЙ КЭШ: Оставляем только последние N сообщений
     @Query("""
         DELETE FROM local_messages 
         WHERE session_id = :sessionId 

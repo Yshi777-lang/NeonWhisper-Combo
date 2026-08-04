@@ -1,6 +1,10 @@
 package com.neonwhisper.combo.data.db
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(tableName = "local_sessions")
 data class LocalSessionEntity(
@@ -13,14 +17,18 @@ data class LocalSessionEntity(
     val favorite: Boolean = false
 )
 
-@Entity(tableName = "local_messages", foreignKeys = [
-    ForeignKey(
-        entity = LocalSessionEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["session_id"],
-        onDelete = ForeignKey.CASCADE
-    )
-], indices = [Index("session_id")])  ← ДОБАВИЛИ ИНДЕКС!
+@Entity(
+    tableName = "local_messages",
+    foreignKeys = [
+        ForeignKey(
+            entity = LocalSessionEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["session_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("session_id")]
+)
 data class LocalMessageEntity(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "session_id") val sessionId: String,
