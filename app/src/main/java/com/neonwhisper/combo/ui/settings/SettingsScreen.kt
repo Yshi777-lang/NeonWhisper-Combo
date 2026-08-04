@@ -1,5 +1,6 @@
 package com.neonwhisper.combo.ui.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,21 +16,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val settings by viewModel.settings.collectAsState()
     val isSaving by viewModel.isSaving.collectAsState()
-
     val purplePrimary = Color(0xFF9C27B0)
-    val purpleSurface = Color(0xFF1E1E2E)
     val purpleBackground = Color(0xFF12121C)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("⚙️ Настройки Провайдера", color = Color.White) },
+                title = { Text("⚙️ Настройки", color = Color.White) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = purplePrimary
                 )
             )
         },
-        containerColor = purpleBackground
+        modifier = Modifier.background(purpleBackground)
     ) { padding ->
         Column(
             modifier = Modifier
@@ -39,112 +38,34 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Выбор провайдера
-            var expanded by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-                OutlinedTextField(
-                    value = settings.provider.uppercase(),
-                    onValueChange = { },
-                    readOnly = true,
-                    label = { Text("Провайдер", color = Color.LightGray) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = purplePrimary,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    ),
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    containerColor = purpleSurface
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Qwen (Alibaba)", color = Color.White) },
-                        onClick = { 
-                            viewModel.updateSetting { current ->
-                                current.copy(
-                                    provider = "qwen", 
-                                    modelId = "qwen-max", 
-                                    baseUrl = "https://dashscope-intl.aliyuncs.com/api/v1"
-                                )
-                            }
-                            expanded = false 
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("DeepSeek", color = Color.White) },
-                        onClick = { 
-                            viewModel.updateSetting { current ->
-                                current.copy(
-                                    provider = "deepseek", 
-                                    modelId = "deepseek-chat", 
-                                    baseUrl = "https://api.deepseek.com/v1"
-                                )
-                            }
-                            expanded = false 
-                        }
-                    )
-                }
-            }
-
-            // API Key
+            Text("Провайдер: ${settings.provider}", color = Color.White)
+            
             OutlinedTextField(
                 value = settings.apiKey,
                 onValueChange = { newValue -> 
                     viewModel.updateSetting { current -> current.copy(apiKey = newValue) }
                 },
                 label = { Text("API Key", color = Color.LightGray) },
+                modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = purplePrimary,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
+                    unfocusedBorderColor = Color.Gray
+                )
             )
-
-            // Model ID
+            
             OutlinedTextField(
                 value = settings.modelId,
                 onValueChange = { newValue -> 
                     viewModel.updateSetting { current -> current.copy(modelId = newValue) }
                 },
-                label = { Text("ID Модели (напр. qwen-max, deepseek-chat)", color = Color.LightGray) },
+                label = { Text("Model ID", color = Color.LightGray) },
+                modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = purplePrimary,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
+                    unfocusedBorderColor = Color.Gray
+                )
             )
-
-            // Размер кэша
-            OutlinedTextField(
-                value = settings.maxContextMessages.toString(),
-                onValueChange = { newValue -> 
-                    val intValue = newValue.toIntOrNull() ?: 40
-                    viewModel.updateSetting { current -> current.copy(maxContextMessages = intValue) }
-                },
-                label = { Text("Глубина кэша (последних сообщений)", color = Color.LightGray) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = purplePrimary,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Кнопка сохранения
+            
             Button(
                 onClick = { viewModel.saveSettings() },
                 enabled = !isSaving && settings.apiKey.isNotBlank(),
@@ -152,16 +73,18 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
                 if (isSaving) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
                 } else {
-                    Text("💾 Сохранить и Активировать", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                    Text("💾 Сохранить", color = Color.White)
                 }
             }
             
             Text(
-                text = "💡 Совет: Кэш автоматически обрежет старые сообщения, экономя токены и предотвращая вылеты.",
+                text = "💡 Введи API ключ Qwen или DeepSeek",
                 color = Color.Gray,
-                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
