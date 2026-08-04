@@ -4,14 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val settings by viewModel.settings.collectAsState()
@@ -23,12 +22,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
         topBar = {
             TopAppBar(
                 title = { Text("⚙️ Настройки", color = Color.White) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = purplePrimary
-                )
+                backgroundColor = purplePrimary
             )
         },
-        modifier = Modifier.background(purpleBackground)
+        backgroundColor = purpleBackground
     ) { padding ->
         Column(
             modifier = Modifier
@@ -47,7 +44,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 },
                 label = { Text("API Key", color = Color.LightGray) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = purplePrimary,
                     unfocusedBorderColor = Color.Gray
                 )
@@ -60,7 +57,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 },
                 label = { Text("Model ID", color = Color.LightGray) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = purplePrimary,
                     unfocusedBorderColor = Color.Gray
                 )
@@ -69,24 +66,15 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             Button(
                 onClick = { viewModel.saveSettings() },
                 enabled = !isSaving && settings.apiKey.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = purplePrimary),
+                colors = ButtonDefaults.buttonColors(backgroundColor = purplePrimary),
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
                 if (isSaving) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
                     Text("💾 Сохранить", color = Color.White)
                 }
             }
-            
-            Text(
-                text = "💡 Введи API ключ Qwen или DeepSeek",
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 8.dp)
-            )
         }
     }
 }

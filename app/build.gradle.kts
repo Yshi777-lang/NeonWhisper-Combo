@@ -12,8 +12,8 @@ android {
         applicationId = "com.neonwhisper.combo"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.5.0-working"
+        versionCode = 7
+        versionName = "1.6.0-no-theme"
     }
 
     buildTypes {
@@ -34,19 +34,21 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    
-    // Compose BOM для совместимости
+    // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material:material")  // Используем Material2 вместо Material3!
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     
     // Room
