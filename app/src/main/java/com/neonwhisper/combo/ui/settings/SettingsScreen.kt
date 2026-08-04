@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -17,7 +16,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val settings by viewModel.settings.collectAsState()
     val isSaving by viewModel.isSaving.collectAsState()
 
-    // Наша фиолетовая тема NeonWhisper
     val purplePrimary = Color(0xFF9C27B0)
     val purpleSurface = Color(0xFF1E1E2E)
     val purpleBackground = Color(0xFF12121C)
@@ -26,7 +24,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
         topBar = {
             TopAppBar(
                 title = { Text("⚙️ Настройки Провайдера", color = Color.White) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = purplePrimary)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = purplePrimary
+                )
             )
         },
         containerColor = purpleBackground
@@ -47,7 +47,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             ) {
                 OutlinedTextField(
                     value = settings.provider.uppercase(),
-                    onValueChange = {},
+                    onValueChange = { },
                     readOnly = true,
                     label = { Text("Провайдер", color = Color.LightGray) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -67,14 +67,26 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     DropdownMenuItem(
                         text = { Text("Qwen (Alibaba)", color = Color.White) },
                         onClick = { 
-                            viewModel.updateSetting { it.copy(provider = "qwen", modelId = "qwen-max", baseUrl = "https://dashscope-intl.aliyuncs.com/api/v1") }
+                            viewModel.updateSetting { current ->
+                                current.copy(
+                                    provider = "qwen", 
+                                    modelId = "qwen-max", 
+                                    baseUrl = "https://dashscope-intl.aliyuncs.com/api/v1"
+                                )
+                            }
                             expanded = false 
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("DeepSeek", color = Color.White) },
                         onClick = { 
-                            viewModel.updateSetting { it.copy(provider = "deepseek", modelId = "deepseek-chat", baseUrl = "https://api.deepseek.com/v1") }
+                            viewModel.updateSetting { current ->
+                                current.copy(
+                                    provider = "deepseek", 
+                                    modelId = "deepseek-chat", 
+                                    baseUrl = "https://api.deepseek.com/v1"
+                                )
+                            }
                             expanded = false 
                         }
                     )
@@ -84,7 +96,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             // API Key
             OutlinedTextField(
                 value = settings.apiKey,
-                onValueChange = { viewModel.updateSetting { it.copy(apiKey = it) } },
+                onValueChange = { newValue -> 
+                    viewModel.updateSetting { current -> current.copy(apiKey = newValue) }
+                },
                 label = { Text("API Key", color = Color.LightGray) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = purplePrimary,
@@ -98,7 +112,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             // Model ID
             OutlinedTextField(
                 value = settings.modelId,
-                onValueChange = { viewModel.updateSetting { it.copy(modelId = it) } },
+                onValueChange = { newValue -> 
+                    viewModel.updateSetting { current -> current.copy(modelId = newValue) }
+                },
                 label = { Text("ID Модели (напр. qwen-max, deepseek-chat)", color = Color.LightGray) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = purplePrimary,
@@ -112,9 +128,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             // Размер кэша
             OutlinedTextField(
                 value = settings.maxContextMessages.toString(),
-                onValueChange = { 
-                    val intValue = it.toIntOrNull() ?: 40
-                    viewModel.updateSetting { it.copy(maxContextMessages = intValue) } 
+                onValueChange = { newValue -> 
+                    val intValue = newValue.toIntOrNull() ?: 40
+                    viewModel.updateSetting { current -> current.copy(maxContextMessages = intValue) }
                 },
                 label = { Text("Глубина кэша (последних сообщений)", color = Color.LightGray) },
                 colors = OutlinedTextFieldDefaults.colors(
