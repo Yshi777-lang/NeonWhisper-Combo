@@ -1,6 +1,7 @@
 package com.neonwhisper.combo.ui.browser
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.webkit.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -52,16 +53,33 @@ fun BrowserScreen(viewModel: BrowserViewModel = viewModel()) {
             AndroidView(
                 factory = { context ->
                     WebView(context).apply {
+                        layoutParams = android.view.ViewGroup.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        
                         settings.javaScriptEnabled = true
                         settings.domStorageEnabled = false
                         settings.cacheMode = WebSettings.LOAD_NO_CACHE
                         settings.setGeolocationEnabled(false)
+                        settings.loadWithOverviewMode = true
+                        settings.useWideViewPort = true
+                        
+                        // Фон WebView
+                        setBackgroundColor(Color(0xFF12121C).value.toInt())
                         
                         webViewClient = object : WebViewClient() {
-                            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                                 viewModel.setLoading(true)
                             }
                             override fun onPageFinished(view: WebView?, url: String?) {
+                                viewModel.setLoading(false)
+                            }
+                            override fun onReceivedError(
+                                view: WebView?,
+                                request: WebResourceRequest?,
+                                error: WebResourceError?
+                            ) {
                                 viewModel.setLoading(false)
                             }
                             override fun shouldInterceptRequest(
@@ -76,10 +94,14 @@ fun BrowserScreen(viewModel: BrowserViewModel = viewModel()) {
                                 return super.shouldInterceptRequest(view, request)
                             }
                         }
+                        
+                        // Загружаем стартовую страницу
+                        loadUrl(url)
                     }
                 },
                 update = { webView ->
-                    if (viewModel.shouldLoad()) {
+                    val currentUrl = webView.url
+                    if (currentUrl != url && viewModel.shouldLoad()) {
                         webView.loadUrl(url)
                     }
                 }

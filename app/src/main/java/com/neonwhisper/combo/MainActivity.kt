@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -37,23 +39,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen() {
-    var selectedTab by remember { mutableStateOf(0) }
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val chatViewModel: ChatViewModel = viewModel()
     val browserViewModel: BrowserViewModel = viewModel()
+    
+    val titles = listOf("💬 Чат", "🌐 Браузер", "⚙️ Настройки")
     
     Column(modifier = Modifier.fillMaxSize()) {
         // Верхняя панель
         TopAppBar(
             title = { 
                 Text(
-                    when (selectedTab) {
-                        0 -> "💬 Чат"
-                        1 -> "🌐 Браузер"
-                        2 -> "⚙️ Настройки"
-                        else -> "NeonWhisper Combo"
-                    },
+                    text = titles[pagerState.currentPage],
                     color = Color.White
                 )
             },
@@ -61,9 +61,12 @@ fun MainScreen() {
             elevation = 8.dp
         )
         
-        // Контент
-        Box(modifier = Modifier.weight(1f)) {
-            when (selectedTab) {
+        // Горизонтальный свайп
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f)
+        ) { page ->
+            when (page) {
                 0 -> ChatScreen(viewModel = chatViewModel)
                 1 -> BrowserScreen(viewModel = browserViewModel)
                 2 -> SettingsScreen()
@@ -74,25 +77,37 @@ fun MainScreen() {
         BottomNavigation(backgroundColor = Color(0xFF1E1E2E)) {
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.Chat, contentDescription = "Chat", tint = Color.White) },
-                label = { Text("Чат", color = Color.White) },
-                selected = selectedTab == 0,
-                onClick = { selectedTab = 0 },
+                label = { Text("Чат", color = if (pagerState.currentPage == 0) Color(0xFF9C27B0) else Color.Gray) },
+                selected = pagerState.currentPage == 0,
+                onClick = { 
+                    coroutineScope { 
+                        pagerState.animateScrollToPage(0) 
+                    }
+                },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.Public, contentDescription = "Browser", tint = Color.White) },
-                label = { Text("Браузер", color = Color.White) },
-                selected = selectedTab == 1,
-                onClick = { selectedTab = 1 },
+                label = { Text("Браузер", color = if (pagerState.currentPage == 1) Color(0xFF9C27B0) else Color.Gray) },
+                selected = pagerState.currentPage == 1,
+                onClick = { 
+                    coroutineScope { 
+                        pagerState.animateScrollToPage(1) 
+                    }
+                },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White) },
-                label = { Text("Настройки", color = Color.White) },
-                selected = selectedTab == 2,
-                onClick = { selectedTab = 2 },
+                label = { Text("Настройки", color = if (pagerState.currentPage == 2) Color(0xFF9C27B0) else Color.Gray) },
+                selected = pagerState.currentPage == 2,
+                onClick = { 
+                    coroutineScope { 
+                        pagerState.animateScrollToPage(2) 
+                    }
+                },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
