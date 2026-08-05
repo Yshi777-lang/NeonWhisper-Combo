@@ -3,14 +3,24 @@ package com.neonwhisper.combo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -42,12 +52,12 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen() {
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = 3)
     val scope = rememberCoroutineScope()
     val chatViewModel: ChatViewModel = viewModel()
     val browserViewModel: BrowserViewModel = viewModel()
     
-    val titles = listOf("💬 Чат", " Браузер", "⚙️ Настройки")
+    val titles = listOf("Чат", "Браузер", "Настройки")
     
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
@@ -72,7 +82,7 @@ fun MainScreen() {
                 icon = { Icon(Icons.Filled.Chat, contentDescription = "Chat", tint = Color.White) },
                 label = { Text("Чат", color = if (pagerState.currentPage == 0) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 0,
-                onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
+                onClick = { scope.launch { pagerState.scrollToPage(0) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
@@ -80,7 +90,7 @@ fun MainScreen() {
                 icon = { Icon(Icons.Filled.Public, contentDescription = "Browser", tint = Color.White) },
                 label = { Text("Браузер", color = if (pagerState.currentPage == 1) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 1,
-                onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
+                onClick = { scope.launch { pagerState.scrollToPage(1) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
@@ -88,7 +98,7 @@ fun MainScreen() {
                 icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White) },
                 label = { Text("Настройки", color = if (pagerState.currentPage == 2) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 2,
-                onClick = { scope.launch { pagerState.animateScrollToPage(2) } },
+                onClick = { scope.launch { pagerState.scrollToPage(2) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
