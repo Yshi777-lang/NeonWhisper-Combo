@@ -12,8 +12,8 @@ android {
         applicationId = "com.neonwhisper.combo"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.6.0-no-theme"
+        versionCode = 8
+        versionName = "1.7.0-browser"
     }
 
     buildTypes {
@@ -47,9 +47,11 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material:material")  // Используем Material2 вместо Material3!
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
