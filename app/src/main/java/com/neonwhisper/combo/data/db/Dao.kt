@@ -9,6 +9,9 @@ interface ChatDao {
     @Query("SELECT * FROM local_sessions ORDER BY updated_at DESC")
     fun observeSessions(): Flow<List<LocalSessionEntity>>
 
+    @Query("SELECT * FROM local_sessions WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): LocalSessionEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSession(session: LocalSessionEntity)
 
