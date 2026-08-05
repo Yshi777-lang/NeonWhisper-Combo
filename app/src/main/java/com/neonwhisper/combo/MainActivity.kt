@@ -43,25 +43,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val pagerState = rememberPagerState(pageCount = { 3 })
+    val scope = rememberCoroutineScope()
     val chatViewModel: ChatViewModel = viewModel()
     val browserViewModel: BrowserViewModel = viewModel()
     
-    val titles = listOf("💬 Чат", "🌐 Браузер", "⚙️ Настройки")
+    val titles = listOf("💬 Чат", " Браузер", "⚙️ Настройки")
     
     Column(modifier = Modifier.fillMaxSize()) {
-        // Верхняя панель
         TopAppBar(
-            title = { 
-                Text(
-                    text = titles[pagerState.currentPage],
-                    color = Color.White
-                )
-            },
+            title = { Text(text = titles[pagerState.currentPage], color = Color.White) },
             backgroundColor = Color(0xFF9C27B0),
             elevation = 8.dp
         )
         
-        // Горизонтальный свайп
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f)
@@ -73,17 +67,12 @@ fun MainScreen() {
             }
         }
         
-        // Нижняя навигация
         BottomNavigation(backgroundColor = Color(0xFF1E1E2E)) {
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.Chat, contentDescription = "Chat", tint = Color.White) },
                 label = { Text("Чат", color = if (pagerState.currentPage == 0) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 0,
-                onClick = { 
-                    coroutineScope { 
-                        pagerState.animateScrollToPage(0) 
-                    }
-                },
+                onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
@@ -91,11 +80,7 @@ fun MainScreen() {
                 icon = { Icon(Icons.Filled.Public, contentDescription = "Browser", tint = Color.White) },
                 label = { Text("Браузер", color = if (pagerState.currentPage == 1) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 1,
-                onClick = { 
-                    coroutineScope { 
-                        pagerState.animateScrollToPage(1) 
-                    }
-                },
+                onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
@@ -103,11 +88,7 @@ fun MainScreen() {
                 icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White) },
                 label = { Text("Настройки", color = if (pagerState.currentPage == 2) Color(0xFF9C27B0) else Color.Gray) },
                 selected = pagerState.currentPage == 2,
-                onClick = { 
-                    coroutineScope { 
-                        pagerState.animateScrollToPage(2) 
-                    }
-                },
+                onClick = { scope.launch { pagerState.animateScrollToPage(2) } },
                 selectedContentColor = Color(0xFF9C27B0),
                 unselectedContentColor = Color.Gray
             )
