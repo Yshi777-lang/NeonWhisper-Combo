@@ -3,27 +3,27 @@ package com.neonwhisper.combo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.weight
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neonwhisper.combo.ui.browser.BrowserScreen
 import com.neonwhisper.combo.ui.browser.BrowserViewModel
@@ -41,7 +41,10 @@ class MainActivity : ComponentActivity() {
                     secondary = Color(0xFFBA68C8)
                 )
             ) {
-                Surface(modifier = Modifier.fillMaxSize().background(Color(0xFF12121C))) {
+                Surface(
+                    modifier = Modifier.fillMaxSize().background(Color(0xFF12121C)),
+                    color = Color(0xFF12121C)
+                ) {
                     MainScreen()
                 }
             }
@@ -49,59 +52,42 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen() {
-    val pagerState = rememberPagerState(pageCount = 3)
-    val scope = rememberCoroutineScope()
+    var selectedTab by remember { mutableStateOf(0) }
     val chatViewModel: ChatViewModel = viewModel()
     val browserViewModel: BrowserViewModel = viewModel()
     
-    val titles = listOf("Чат", "Браузер", "Настройки")
-    
     Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(
-            title = { Text(text = titles[pagerState.currentPage], color = Color.White) },
+        TabRow(
+            selectedTabIndex = selectedTab,
             backgroundColor = Color(0xFF9C27B0),
-            elevation = 8.dp
-        )
-        
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f)
-        ) { page ->
-            when (page) {
-                0 -> ChatScreen(viewModel = chatViewModel)
-                1 -> BrowserScreen(viewModel = browserViewModel)
-                2 -> SettingsScreen()
-            }
+            contentColor = Color.White
+        ) {
+            Tab(
+                selected = selectedTab == 0,
+                onClick = { selectedTab = 0 },
+                text = { Text("Чат", color = if (selectedTab == 0) Color.White else Color.LightGray) },
+                icon = { Icon(Icons.Filled.Chat, contentDescription = "Chat", tint = if (selectedTab == 0) Color.White else Color.LightGray) }
+            )
+            Tab(
+                selected = selectedTab == 1,
+                onClick = { selectedTab = 1 },
+                text = { Text("Браузер", color = if (selectedTab == 1) Color.White else Color.LightGray) },
+                icon = { Icon(Icons.Filled.Public, contentDescription = "Browser", tint = if (selectedTab == 1) Color.White else Color.LightGray) }
+            )
+            Tab(
+                selected = selectedTab == 2,
+                onClick = { selectedTab = 2 },
+                text = { Text("Настройки", color = if (selectedTab == 2) Color.White else Color.LightGray) },
+                icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = if (selectedTab == 2) Color.White else Color.LightGray) }
+            )
         }
         
-        BottomNavigation(backgroundColor = Color(0xFF1E1E2E)) {
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Chat, contentDescription = "Chat", tint = Color.White) },
-                label = { Text("Чат", color = if (pagerState.currentPage == 0) Color(0xFF9C27B0) else Color.Gray) },
-                selected = pagerState.currentPage == 0,
-                onClick = { scope.launch { pagerState.scrollToPage(0) } },
-                selectedContentColor = Color(0xFF9C27B0),
-                unselectedContentColor = Color.Gray
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Public, contentDescription = "Browser", tint = Color.White) },
-                label = { Text("Браузер", color = if (pagerState.currentPage == 1) Color(0xFF9C27B0) else Color.Gray) },
-                selected = pagerState.currentPage == 1,
-                onClick = { scope.launch { pagerState.scrollToPage(1) } },
-                selectedContentColor = Color(0xFF9C27B0),
-                unselectedContentColor = Color.Gray
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White) },
-                label = { Text("Настройки", color = if (pagerState.currentPage == 2) Color(0xFF9C27B0) else Color.Gray) },
-                selected = pagerState.currentPage == 2,
-                onClick = { scope.launch { pagerState.scrollToPage(2) } },
-                selectedContentColor = Color(0xFF9C27B0),
-                unselectedContentColor = Color.Gray
-            )
+        when (selectedTab) {
+            0 -> ChatScreen(viewModel = chatViewModel)
+            1 -> BrowserScreen(viewModel = browserViewModel)
+            2 -> SettingsScreen()
         }
     }
 }
